@@ -1,15 +1,13 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("input.txt")
-        .unwrap()
-        .lines()
-        .map(str::to_owned)
-        .collect::<Vec<_>>();
-    let split_input = input.iter().position(|l| l == "").unwrap();
+    let input = fs::read_to_string("input.txt").unwrap();
 
-    let fresh_list = &input[0..split_input]
-        .iter()
+    let split_input = input.lines().position(|l| l.to_owned() == "").unwrap();
+
+    let fresh_list = input
+        .lines()
+        .take(split_input)
         .map(|s| {
             let mut parts = s.split('-');
             let start = parts.next().unwrap().parse::<usize>().unwrap();
@@ -18,8 +16,9 @@ fn main() {
         })
         .collect::<Vec<_>>();
 
-    let ingredient_list = (&input[(split_input + 1)..])
-        .iter()
+    let ingredient_list = input
+        .lines()
+        .skip(split_input + 1)
         .map(|s| s.parse::<usize>().unwrap());
     let result: usize = ingredient_list
         .map(|ingredient| fresh_list.iter().any(|range| range.contains(&ingredient)) as usize)
